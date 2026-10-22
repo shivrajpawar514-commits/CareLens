@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareLens - Edge-Native Clinical Visual Safety Auditor</title>
+  <meta name="description" content="Edge-native clinical visual safety auditing system powered by Gemma 4 Vision and deterministic safety rules.">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="prime-body">
+  <!-- Regulatory & Decision Support Advisory Top Bar -->
+  <aside class="prime-top-advisory" role="alert" aria-label="Clinical Decision Support Notice">
+    <div class="prime-advisory-inner">
+      <span class="prime-advisory-badge">CLINICAL DECISION SUPPORT AID</span>
+      <span class="prime-advisory-text">CareLens is an advisory prototype and not a certified medical device. It does not autonomously alter medical equipment or treatment. All safety findings require qualified clinician verification.</span>
+    </div>
+  </aside>
+
+  <!-- Amazon Prime Video Style Header -->
+  <header class="prime-header">
+    <div class="prime-header-container">
+      <div class="prime-left-nav">
+        <a href="/" class="prime-logo-link" aria-label="CareLens Home">
+          <span class="prime-logo-text">carelens</span>
+          <svg class="prime-smile" viewBox="0 0 100 24" width="70" height="16" fill="none">
+            <path d="M 8 10 C 35 22, 65 22, 92 10" stroke="#00a8e1" stroke-width="3.5" stroke-linecap="round" />
+            <path d="M 87 7 L 93 11 L 87 16" fill="#00a8e1" stroke="#00a8e1" stroke-width="1.5" />
+          </svg>
+        </a>
+        <nav class="prime-main-nav">
+          <a href="/" class="prime-nav-item active">Audit Cockpit</a>
+          <a href="#clinical-presets" class="prime-nav-item">Clinical Feeds</a>
+          <a href="#xray-protocols" class="prime-nav-item">Protocols</a>
+          <a href="/privacy" class="prime-nav-item">Privacy Notice</a>
+          <a href="/terms" class="prime-nav-item">Terms of Use</a>
+        </nav>
+      </div>
+
+      <div class="prime-right-nav">
+        <!-- Live Edge Telemetry -->
+        <div class="prime-telemetry-badge">
+          <span class="telemetry-dot live"></span>
+          <span id="metricProvider" class="telemetry-provider">Edge Metal CV</span>
+          <span class="telemetry-separator">|</span>
+          <span id="metricLatency" class="telemetry-latency">16.8</span><span class="telemetry-unit">ms</span>
+        </div>
+
+        <!-- Master Status Badge (Prime Video Rectangular Tag) -->
+        <div id="masterStatusBadge" class="prime-status-tag status-tag-critical">
+          <span id="masterStatusText">CRITICAL</span>
+        </div>
+
+        <!-- Clinician Profile Block -->
+        <div class="prime-profile-block" title="Active Verified Clinician">
+          <div class="prime-avatar">AS</div>
+          <span class="prime-clinician-name">Dr. Sharma (Attending)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Cockpit Layout -->
+  <main class="prime-main-container">
+    <!-- Featured Incident Banner / Hero Info Block -->
+    <section class="prime-hero-bar">
+      <div class="prime-hero-info">
+        <div class="prime-hero-meta-row">
+          <span class="prime-tag-prime">PRIME AUDIT</span>
+          <span id="heroInspectionType" class="prime-tag-outline">EQUIPMENT SETUP</span>
+          <span class="prime-tag-outline">HD OPTICAL FEED</span>
+          <span id="heroProtocolId" class="prime-meta-text">Protocol: pediatric_icu_v1.0</span>
+          <span class="prime-meta-text">Patient: Pediatric Ward 3B</span>
+        </div>
+        <h1 id="heroTitle" class="prime-hero-title">Thorpe Tube Oxygen Rotameter Inspection</h1>
+        <p id="heroSubtitle" class="prime-hero-desc">
+          Automated edge visual safety audit of oxygen delivery interface and flow rate configuration against pediatric safety guidelines.
+        </p>
+      </div>
+
+      <div class="prime-hero-actions">
+        <button id="btnRunAudit" class="prime-btn-primary" title="Execute Visual Safety Audit">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Run Visual Audit</span>
+        </button>
+        <button id="btnToggleCamera" class="prime-btn-secondary" title="Connect Camera Feed">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span id="labelToggleCamera">Live Camera Feed</span>
+        </button>
+        <label class="prime-btn-secondary btn-upload-label" title="Upload Image File">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload Image</span>
+          <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        </label>
+        <button id="btnToggleXray" class="prime-btn-xray active" title="Toggle Prime Video X-Ray Overlay Mode">
+          <span>X-Ray: ON</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Two-Column Workspace: Video Player + X-Ray Details Drawer -->
+    <div class="prime-workspace-grid">
+      <!-- Left: Prime Video Player Viewport -->
+      <section class="prime-player-section">
+        <div class="prime-player-card">
+          <!-- Viewport Header Overlay -->
+          <div class="player-header-overlay">
+            <div class="player-title-row">
+              <span class="player-live-dot"></span>
+              <span id="playerStreamTitle">LIVE FEED: PEDIATRIC ICU BED 03</span>
+            </div>
+            <div class="player-badges">
+              <span id="badgeActiveModel" class="player-badge">MODEL: GEMMA 4 (5.2B)</span>
+              <span id="badgeOverlayCount" class="player-badge">2 OVERLAYS GROUNDED</span>
+            </div>
+          </div>
+
+          <!-- Media Display Box -->
+          <div id="canvasContainer" class="prime-media-viewport">
+            <img id="inspectedImage" class="prime-media-image" src="/assets/pediatric_oxygen_flow.svg" alt="Medical Equipment Inspection Stream">
+            <video id="liveVideo" class="prime-live-video" autoplay playsinline muted style="display:none;"></video>
+            <canvas id="overlayCanvas" class="prime-overlay-canvas"></canvas>
+          </div>
+
+          <!-- Prime Video Player Transport Control Bar -->
+          <div class="prime-player-controls">
+            <div class="player-controls-left">
+              <button id="btnPlayPause" class="player-control-btn" title="Pause / Freeze Frame">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              </button>
+              <div class="player-time-display">
+                <span id="playerTimestamp">00:16</span> / <span>LIVE STREAM</span>
+              </div>
+            </div>
+
+            <!-- Prime Video Subtitle / Imperative Audio Alert Phrase -->
+            <div class="player-caption-box">
+              <span class="caption-label">VOICE ALERT:</span>
+              <span id="audioAlertText" class="caption-text">"Verify pediatric oxygen flow rate immediately against patient prescription."</span>
+              <span id="audioWordCountBadge" class="caption-words">10 words</span>
+            </div>
+
+            <div class="player-controls-right">
+              <button id="btnPlayAudio" class="player-control-btn" title="Replay Imperative Voice Alert">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </button>
+              <button id="btnToggleMute" class="player-control-btn" title="Mute Audio Alert">
+                <svg id="iconUnmuted" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19 8a5 5 0 0 1 0 8"/></svg>
+                <svg id="iconMuted" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              </button>
+              <button id="btnFullscreen" class="player-control-btn" title="Fullscreen">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Clinical Incident Carousel (Amazon Prime Video Rail Style) -->
+        <section id="clinical-presets" class="prime-carousel-section">
+          <div class="carousel-header">
+            <h2 class="carousel-title">CLINICAL SAFETY INCIDENT FEEDS &amp; BENCHMARKS</h2>
+            <span class="carousel-subtitle">Standardized equipment scenarios evaluated against active protocols</span>
+          </div>
+          <div class="prime-tiles-row">
+            <!-- Tile 1 -->
+            <div id="presetPedO2Crit" class="prime-media-card active" data-preset="pediatric_o2_critical">
+              <div class="card-thumbnail-box">
+                <img src="/assets/pediatric_oxygen_flow.svg" alt="Pediatric O2 Flowmeter" class="card-thumb-img">
+                <span class="card-status-badge badge-crit">CRITICAL</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Pediatric O2 Over-delivery</strong>
+                <span class="card-desc">Thorpe tube: 8.0 L/min vs 2.0 Max</span>
+                <span class="card-protocol">Protocol: pediatric_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 2 -->
+            <div id="presetIcuCrit" class="prime-media-card" data-preset="icu_monitor_critical">
+              <div class="card-thumbnail-box">
+                <img src="/assets/icu_patient_monitor.svg" alt="ICU Monitor Desaturation" class="card-thumb-img">
+                <span class="card-status-badge badge-crit">CRITICAL</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">ICU Desaturation &amp; Shock</strong>
+                <span class="card-desc">SpO2 84% • HR 142 bpm • BP 78/45</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 3 -->
+            <div id="presetPumpWarn" class="prime-media-card" data-preset="infusion_pump_warning">
+              <div class="card-thumbnail-box">
+                <img src="/assets/infusion_pump.svg" alt="Infusion Pump Roller Clamp" class="card-thumb-img">
+                <span class="card-status-badge badge-warn">WARNING</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Infusion Line Occlusion</strong>
+                <span class="card-desc">Manual Roller Clamp Closed</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 4 -->
+            <div id="presetIcuNom" class="prime-media-card" data-preset="icu_monitor_nominal">
+              <div class="card-thumbnail-box">
+                <img src="/assets/icu_monitor_nominal.svg" alt="Nominal ICU Monitor" class="card-thumb-img">
+                <span class="card-status-badge badge-pass">NOMINAL</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Nominal Adult ICU Monitor</strong>
+                <span class="card-desc">Resting vitals: HR 72 • SpO2 98%</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 5 -->
+            <div id="presetGlareWarn" class="prime-media-card" data-preset="unclear_low_light">
+              <div class="card-thumbnail-box">
+                <img src="/assets/unclear_low_light.svg" alt="Optical Glare Low Light" class="card-thumb-img">
+                <span class="card-status-badge badge-warn">UNCERTAIN</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Optical Glare Degradation</strong>
+                <span class="card-desc">Severe Glare: Requests Human Check</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Right: Amazon Prime Video X-Ray Side Panel -->
+      <aside class="prime-xray-sidebar">
+        <!-- X-Ray Header -->
+        <div class="xray-header-bar">
+          <div class="xray-title-block">
+            <span class="xray-tag">X-RAY</span>
+            <span class="xray-title">CLINICAL TELEMETRY &amp; GOVERNANCE</span>
+          </div>
+          <span class="xray-version-label">CareLens Engine v1.0.0</span>
+        </div>
+
+        <!-- Section 1: Extracted Vitals Grid -->
+        <div class="xray-box">
+          <div class="xray-box-header">
+            <span class="xray-section-title">OPTICAL VITALS EXTRACTION</span>
+            <span class="xray-channel-count">4 Channels</span>
+          </div>
+          <div class="xray-vitals-grid">
+            <div id="cardHr" class="xray-vital-tile">
+              <div class="xray-vital-header">
+                <span class="xray-vital-label">HEART RATE</span>
+                <span id="badgeHr" class="xray-status-tag tag-na">N/A</span>
+              </div>
+              <div class="xray-vital-reading">
+                <span id="valHr" class="xray-val">N/A</span>
+                <span class="xray-unit">bpm</span>
+              </div>
+            </div>
+
+            <div id="cardSpo2" class="xray-vital-tile">
+              <div class="xray-vital-header">
+                <span class="xray-vital-label">SpO2 PULSE OX</span>
+                <span id="badgeSpo2" class="xray-status-tag tag-na">N/A</span>
+              </div>
+              <div class="xray-vital-reading">
+                <span id="valSpo2" class="xray-val">N/A</span>
+                <span class="xray-unit">%</span>
+              </div>
+            </div>
+
+            <div id="cardBp" class="xray-vital-tile">
+              <div class="xray-vital-header">
+                <span class="xray-vital-label">BLOOD PRESSURE</span>
+                <span id="badgeBp" class="xray-status-tag tag-na">N/A</span>
+              </div>
+              <div class="xray-vital-reading">
+                <span id="valBp" class="xray-val">N/A</span>
+                <span class="xray-unit">mmHg</span>
+              </div>
+            </div>
+
+            <div id="cardRr" class="xray-vital-tile">
+              <div class="xray-vital-header">
+                <span class="xray-vital-label">RESPIRATION</span>
+                <span id="badgeRr" class="xray-status-tag tag-na">N/A</span>
+              </div>
+              <div class="xray-vital-reading">
+                <span id="valRr" class="xray-val">N/A</span>
+                <span class="xray-unit">br/min</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Evidence Findings Feed -->
+        <div class="xray-box">
+          <div class="xray-box-header">
+            <span class="xray-section-title">VISIBLE CLINICAL EVIDENCE</span>
+            <span id="findingsCountBadge" class="xray-count-tag">2 Observations</span>
+          </div>
+          <ul id="findingsList" class="xray-findings-list">
+            <li class="xray-finding-item item-critical">
+              <span class="xray-bullet">&gt;</span>
+              <span>High oxygen flow of 8.0 L/min exceeds pediatric protocol threshold (2.0 L/min).</span>
+            </li>
+            <li class="xray-finding-item item-critical">
+              <span class="xray-bullet">&gt;</span>
+              <span>Component 'Oxygen Rotameter Dial' flagged: Observed 8.0 L/min exceeds pediatric limit (2.0 L/min); verify immediately.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: Protocol Configuration -->
+        <div id="xray-protocols" class="xray-box">
+          <div class="xray-box-header">
+            <span class="xray-section-title">REFERENCE PROTOCOL CONFIG</span>
+            <span class="xray-status-tag tag-active">ACTIVE</span>
+          </div>
+          <div class="xray-form-grid">
+            <div class="xray-form-group">
+              <label for="selectProtocol">Protocol Specification:</label>
+              <select id="selectProtocol" class="prime-select">
+                <option value="pediatric_icu_v1.0" selected>Pediatric ICU Safety Protocol (v1.0)</option>
+                <option value="adult_icu_v1.0">Adult ICU Standard Protocol (v1.0)</option>
+                <option value="neonatal_icu_v1.0">Neonatal ICU Precision Protocol (v1.0)</option>
+              </select>
+            </div>
+            <div class="xray-form-group">
+              <label for="selectPatientContext">Patient Category:</label>
+              <select id="selectPatientContext" class="prime-select">
+                <option value="pediatric" selected>Pediatric (Infant / Child)</option>
+                <option value="adult">Adult (&gt;= 18 yrs)</option>
+                <option value="neonatal">Neonatal (&lt; 28 days)</option>
+              </select>
+            </div>
+          </div>
+          <div id="protocolSummaryText" class="xray-protocol-summary">
+            Pediatric Protocol Rules: Max O2 Flow: 2.0 L/min • SpO2 Target: &gt;= 95% (Crit &lt;= 90%) • HR: 80-130 bpm • RR: 20-30 bpm.
+          </div>
+        </div>
+
+        <!-- Section 4: Mandatory Clinician Verification & Sign-Off -->
+        <div class="xray-box xray-box-signoff">
+          <div class="xray-box-header">
+            <span class="xray-section-title">MANDATORY CLINICIAN SIGN-OFF</span>
+            <span class="xray-status-tag tag-governance">REQUIRED</span>
+          </div>
+          <p class="xray-signoff-desc">
+            Advisory decision-support protocol requires a licensed clinician to verify visual findings before executing clinical action.
+          </p>
+          <form id="signoffForm" class="xray-signoff-form">
+            <div class="xray-form-group">
+              <label for="inputClinician">Clinician ID / Staff Signature:</label>
+              <input type="text" id="inputClinician" class="prime-input" value="Dr. A. Sharma, PICU Attending" required>
+            </div>
+            <div class="xray-form-group">
+              <label for="selectActionTaken">Clinical Action Taken:</label>
+              <select id="selectActionTaken" class="prime-select">
+                <option value="Verified and adjusted flow rate to prescription">Verified and adjusted flow rate to prescription</option>
+                <option value="Verified false alarm or artifact">Verified false alarm or artifact</option>
+                <option value="Initiated bedside clinical evaluation">Initiated bedside clinical evaluation</option>
+                <option value="Confirmed nominal condition">Confirmed nominal condition</option>
+              </select>
+            </div>
+            <div class="xray-form-group">
+              <label for="inputNotes">Bedside Clinical Notes:</label>
+              <input type="text" id="inputNotes" class="prime-input" placeholder="e.g. Oxygen flow reduced to 1.5 L/min per order.">
+            </div>
+            <div class="xray-signoff-actions">
+              <button type="submit" id="btnSignOff" class="prime-btn-signoff">
+                <span>Sign Off and Log Audit</span>
+              </button>
+              <div id="signoffFeedback" class="xray-signoff-confirmed" style="display:none;">
+                Verified and logged to audit trail.
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Section 5: Canonical Contract JSON Drawer Trigger -->
+        <div class="xray-contract-footer">
+          <button id="btnToggleContract" class="prime-btn-link">View Canonical JSON Contract ({ })</button>
+          <span class="contract-audit-id">Audit ID: <strong id="labelAuditId">aud_ready</strong></span>
+        </div>
+        <div id="contractDrawer" class="prime-contract-drawer" style="display:none;">
+          <pre><code id="jsonContractViewer">{}</code></pre>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Amazon Prime Video Style Footer -->
+  <footer class="prime-footer">
+    <div class="prime-footer-content">
+      <div class="prime-footer-brand">carelens clinical systems</div>
+      <div class="prime-footer-links">
+        <a href="/terms">Terms and Conditions</a>
+        <a href="/privacy">Privacy Notice</a>
+        <a href="#clinical-presets">Clinical Incidents</a>
+        <a href="/api/health">System Health API</a>
+      </div>
+      <div class="prime-footer-copy">
+        (c) 2026 CareLens Systems. Advisory decision-support aid. Not a certified medical device. Clinician verification required for all clinical actions.
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

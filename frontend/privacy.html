@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareLens Privacy Notice - Clinical Edge Safety Systems</title>
+  <meta name="description" content="Institutional privacy notice for CareLens edge-native clinical visual safety auditor.">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="prime-body">
+  <!-- Prime Video Header -->
+  <header class="prime-header">
+    <div class="prime-header-container">
+      <div class="prime-brand">
+        <a href="/" class="prime-logo-link">
+          <span class="prime-logo-text">carelens</span>
+          <svg class="prime-smile" viewBox="0 0 100 24" width="70" height="16" fill="none">
+            <path d="M 8 10 C 35 22, 65 22, 92 10" stroke="#00a8e1" stroke-width="3.5" stroke-linecap="round" />
+            <path d="M 87 7 L 93 11 L 87 16" fill="#00a8e1" stroke="#00a8e1" stroke-width="1.5" />
+          </svg>
+        </a>
+        <span class="prime-badge-tag">CLINICAL</span>
+      </div>
+
+      <nav class="prime-nav">
+        <a href="/" class="prime-nav-link">Audit Cockpit</a>
+        <a href="/privacy" class="prime-nav-link active">Privacy Notice</a>
+        <a href="/terms" class="prime-nav-link">Terms of Use</a>
+      </nav>
+
+      <div class="prime-header-actions">
+        <a href="/" class="prime-btn-secondary">Return to Cockpit</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Legal Container -->
+  <main class="legal-layout">
+    <div class="legal-sidebar">
+      <div class="legal-nav-box">
+        <div class="legal-nav-title">PRIVACY NAVIGATION</div>
+        <ul class="legal-nav-list">
+          <li><a href="#section-scope" class="legal-nav-item">1. Scope and Authority</a></li>
+          <li><a href="#section-edge-processing" class="legal-nav-item">2. Edge Processing Policy</a></li>
+          <li><a href="#section-imagery" class="legal-nav-item">3. Patient Imagery Handling</a></li>
+          <li><a href="#section-audit-logs" class="legal-nav-item">4. Audit Logs and Metadata</a></li>
+          <li><a href="#section-model-governance" class="legal-nav-item">5. Model Execution Governance</a></li>
+          <li><a href="#section-clinician-verification" class="legal-nav-item">6. Clinician Verification</a></li>
+          <li><a href="#section-contact" class="legal-nav-item">7. Safety Officer Inquiries</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <article class="legal-content">
+      <div class="legal-header-block">
+        <span class="legal-category">LEGAL &amp; CLINICAL COMPLIANCE</span>
+        <h1 class="legal-title">CareLens Clinical Privacy Notice</h1>
+        <div class="legal-meta">Version 1.0.0 | Effective Date: October 22, 2026 | Reference: CL-PRIV-2026-V1</div>
+      </div>
+
+      <div class="legal-callout">
+        <strong>Core Clinical Privacy Guarantee:</strong> CareLens processes optical equipment feeds and patient monitor screens entirely on-device at the edge. Raw patient imagery is never uploaded to third-party cloud infrastructure, never retained beyond active frame analysis, and never utilized for machine learning training without explicit institutional consent.
+      </div>
+
+      <section id="section-scope" class="legal-section">
+        <h2>1. Scope and Authority</h2>
+        <p>This Privacy Notice governs all visual stream ingestions, optical telemetry extractions, and clinical evaluation sessions processed through the CareLens Clinical Safety Auditor. This system operates as a clinical decision-support prototype deployed in authorized hospital wards, simulation laboratories, and intensive care environments.</p>
+        <p>CareLens is engineered for strict adherence to institutional data protection standards, including HIPAA technical safeguards for electronic Protected Health Information (ePHI).</p>
+      </section>
+
+      <section id="section-edge-processing" class="legal-section">
+        <h2>2. Edge Processing Policy</h2>
+        <p>All inference tasks, including vision-language analysis via Gemma 4 and deterministic protocol rule checks, run locally on edge hardware. Image tensors are allocated in volatile system memory (RAM/Unified Memory) for the duration of inference and are purged immediately following response generation.</p>
+        <p>Network isolation is maintained by default: the application binds locally and does not require outbound internet access to perform vital sign extraction or equipment safety verification.</p>
+      </section>
+
+      <section id="section-imagery" class="legal-section">
+        <h2>3. Patient Imagery Handling</h2>
+        <p>CareLens implements strict zero-retention principles for raw visual inputs:</p>
+        <ul>
+          <li><strong>No Persistent Image Storage:</strong> Still captures and video frames are not saved to disk, object storage, or cloud buckets during routine auditing.</li>
+          <li><strong>No Secondary Utilization:</strong> Ingested patient images, monitor screens, and equipment configurations are never repurposed for external model pre-training or public distribution.</li>
+          <li><strong>De-Identification Safeguards:</strong> Any authorized reference dataset utilized for test validation must be de-identified in compliance with HIPAA Safe Harbor criteria.</li>
+        </ul>
+      </section>
+
+      <section id="section-audit-logs" class="legal-section">
+        <h2>4. Audit Logs and Metadata</h2>
+        <p>To satisfy clinical governance, healthcare quality assurance, and traceability mandates, CareLens maintains an immutable local audit log (<code>audit_trail.jsonl</code>). The audit trail records metadata only and deliberately excludes raw pixel arrays.</p>
+        <p>Recorded fields are limited to:</p>
+        <ul>
+          <li>Unique audit identifier (UUID)</li>
+          <li>UTC ISO 8601 timestamp</li>
+          <li>Inference model identifier and execution runtime environment</li>
+          <li>Active clinical protocol identifier and version string</li>
+          <li>Patient context category (Adult, Pediatric, Neonatal)</li>
+          <li>Inspection category (Equipment_Setup, Patient_Monitor, Unknown)</li>
+          <li>Risk tier result (PASS, WARNING, CRITICAL)</li>
+          <li>Extracted numeric vitals summary and evidence findings</li>
+          <li>Clinician review identifier, timestamp, and verification status</li>
+        </ul>
+      </section>
+
+      <section id="section-model-governance" class="legal-section">
+        <h2>5. Model Execution Governance</h2>
+        <p>The vision model operates within a sandboxed runtime. System prompts explicitly forbid ungrounded speculation regarding patient identity, underlying medical history, or unobserved clinical variables. Where visual quality is degraded, the system is mandated to output WARNING and request human bedside verification.</p>
+      </section>
+
+      <section id="section-clinician-verification" class="legal-section">
+        <h2>6. Clinician Verification</h2>
+        <p>CareLens outputs are strictly advisory decision-support aids. The system possesses no autonomous capability or mechanical authorization to modify equipment settings, alter infusion pump rates, or adjust oxygen flow valves. Every safety-critical observation requires physical bedside verification by a qualified clinician.</p>
+      </section>
+
+      <section id="section-contact" class="legal-section">
+        <h2>7. Safety Officer Inquiries</h2>
+        <p>For institutional audits, data processing agreements, or clinical risk queries, contact the institutional Clinical Safety and Governance Committee at:</p>
+        <div class="legal-contact-card">
+          <strong>CareLens Clinical Safety &amp; Governance</strong><br>
+          Institutional Medical Systems Group<br>
+          Email: <span class="legal-code">governance@carelens.local</span><br>
+          Secure Protocol Channel: Internal ICU Network Node
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <!-- Prime Video Style Footer -->
+  <footer class="prime-footer">
+    <div class="prime-footer-content">
+      <div class="prime-footer-brand">carelens clinical systems</div>
+      <div class="prime-footer-links">
+        <a href="/terms">Terms and Conditions</a>
+        <a href="/privacy">Privacy Notice</a>
+        <a href="/">Cockpit Viewport</a>
+        <a href="/api/health">System Health</a>
+      </div>
+      <div class="prime-footer-copy">
+        (c) 2026 CareLens Systems. Advisory decision-support aid. Not a medical device. Clinician verification required for all clinical actions.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

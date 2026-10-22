@@ -1,0 +1,1108 @@
+/* CareLens - Amazon Prime Video UI/UX Design System
+ * Strict compliance: Zero purple gradients, zero pill buttons, zero emojis, zero em dashes.
+ */
+
+:root {
+  --prime-black: #00050d;
+  --prime-bg-dark: #0a0e17;
+  --prime-header-bg: #0f172a;
+  --prime-card-bg: #191e25;
+  --prime-card-hover: #222b36;
+  --prime-border: #27313f;
+  --prime-border-subtle: #1c2430;
+  --prime-border-highlight: #00a8e1;
+
+  --prime-blue: #00a8e1;
+  --prime-blue-hover: #1ab7f0;
+  --prime-blue-active: #008cc0;
+
+  --prime-text-primary: #ffffff;
+  --prime-text-secondary: #c4cdd5;
+  --prime-text-muted: #798897;
+
+  --status-crit: #e50914;
+  --status-crit-bg: rgba(229, 9, 20, 0.15);
+  --status-warn: #e07e00;
+  --status-warn-bg: rgba(224, 126, 0, 0.15);
+  --status-pass: #00a651;
+  --status-pass-bg: rgba(0, 166, 81, 0.15);
+
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --btn-radius: 3px;
+  --card-radius: 4px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--prime-black);
+  color: var(--prime-text-primary);
+  font-family: var(--font-primary);
+  min-height: 100vh;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Regulatory Top Notice */
+.prime-top-advisory {
+  background-color: #0b1320;
+  border-bottom: 1px solid #1a2636;
+  padding: 6px 24px;
+  font-size: 0.75rem;
+}
+.prime-advisory-inner {
+  max-width: 1720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.prime-advisory-badge {
+  background-color: #1a2636;
+  border: 1px solid #2d3f56;
+  color: #00a8e1;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: var(--btn-radius);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.prime-advisory-text {
+  color: var(--prime-text-secondary);
+}
+
+/* Amazon Prime Video Style Header */
+.prime-header {
+  background-color: var(--prime-header-bg);
+  border-bottom: 1px solid var(--prime-border);
+  padding: 12px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.prime-header-container {
+  max-width: 1720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.prime-left-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.prime-logo-link {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  line-height: 1;
+}
+.prime-logo-text {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  display: inline-block;
+}
+.prime-smile {
+  margin-top: -2px;
+  display: block;
+}
+.prime-badge-tag {
+  background-color: #1f2a38;
+  border: 1px solid #334358;
+  color: #00a8e1;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--btn-radius);
+  margin-left: 8px;
+}
+.prime-main-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.prime-nav-item {
+  color: var(--prime-text-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 6px 0;
+  position: relative;
+  transition: color 0.15s ease;
+}
+.prime-nav-item:hover {
+  color: #ffffff;
+}
+.prime-nav-item.active {
+  color: #ffffff;
+  font-weight: 700;
+}
+.prime-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--prime-blue);
+}
+
+.prime-right-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.prime-telemetry-badge {
+  background-color: #141b24;
+  border: 1px solid var(--prime-border);
+  border-radius: var(--btn-radius);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--prime-text-secondary);
+}
+.telemetry-dot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--status-pass);
+  border-radius: 50%;
+}
+.telemetry-dot.live {
+  background-color: #00a8e1;
+}
+.telemetry-provider {
+  color: #ffffff;
+  font-weight: 600;
+}
+.telemetry-separator {
+  color: #3d4a58;
+}
+.telemetry-latency {
+  color: var(--prime-blue);
+  font-weight: 700;
+}
+.telemetry-unit {
+  color: var(--prime-text-muted);
+}
+
+.prime-status-tag {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: var(--btn-radius);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.status-tag-critical {
+  background-color: var(--status-crit);
+  color: #ffffff;
+}
+.status-tag-warning {
+  background-color: var(--status-warn);
+  color: #ffffff;
+}
+.status-tag-pass {
+  background-color: var(--status-pass);
+  color: #ffffff;
+}
+
+.prime-profile-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+  border-left: 1px solid var(--prime-border);
+}
+.prime-avatar {
+  width: 28px;
+  height: 28px;
+  background-color: #00a8e1;
+  color: #00050d;
+  font-weight: 800;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--btn-radius);
+}
+.prime-clinician-name {
+  font-size: 0.8rem;
+  color: var(--prime-text-secondary);
+  font-weight: 500;
+}
+
+/* Main Cockpit Layout */
+.prime-main-container {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Hero / Featured Incident Bar */
+.prime-hero-bar {
+  background-color: var(--prime-card-bg);
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.prime-hero-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+}
+.prime-tag-prime {
+  background-color: var(--prime-blue);
+  color: #00050d;
+  font-weight: 800;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: var(--btn-radius);
+  letter-spacing: 0.05em;
+}
+.prime-tag-outline {
+  border: 1px solid #3d4d62;
+  color: #c4cdd5;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--btn-radius);
+  text-transform: uppercase;
+}
+.prime-meta-text {
+  color: var(--prime-text-muted);
+  font-size: 0.75rem;
+}
+.prime-hero-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.prime-hero-desc {
+  font-size: 0.82rem;
+  color: var(--prime-text-secondary);
+  max-width: 820px;
+}
+
+.prime-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Amazon Prime Video Button Styles (Clean, Rectangular, No Pills) */
+.prime-btn-primary {
+  background-color: var(--prime-blue);
+  color: #00050d;
+  border: 1px solid var(--prime-blue);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+.prime-btn-primary:hover {
+  background-color: var(--prime-blue-hover);
+}
+.prime-btn-secondary {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid #384657;
+  font-family: var(--font-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.prime-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+}
+.btn-upload-label {
+  margin: 0;
+}
+
+.prime-btn-xray {
+  background-color: #1a2736;
+  color: #00a8e1;
+  border: 1px solid #00a8e1;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.prime-btn-xray:hover {
+  background-color: #00a8e1;
+  color: #00050d;
+}
+
+/* Workspace Grid: Left Viewport (68%), Right X-Ray (32%) */
+.prime-workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr 490px;
+  gap: 20px;
+}
+
+/* Player Card */
+.prime-player-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.prime-player-card {
+  background-color: #000000;
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.player-header-overlay {
+  background-color: #0b111a;
+  border-bottom: 1px solid var(--prime-border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.player-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+.player-live-dot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--status-crit);
+  border-radius: 50%;
+}
+.player-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.player-badge {
+  background-color: #182230;
+  border: 1px solid #29384c;
+  color: var(--prime-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--btn-radius);
+}
+
+/* Media Viewport */
+.prime-media-viewport {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  max-height: 600px;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.prime-media-image, .prime-live-video {
+  max-width: 100%;
+  max-height: 600px;
+  width: auto;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+.prime-overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Player Transport Control Bar */
+.prime-player-controls {
+  background-color: #0b111a;
+  border-top: 1px solid var(--prime-border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.player-controls-left, .player-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.player-control-btn {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--btn-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.player-control-btn:hover {
+  background-color: #1e293b;
+  border-color: #3d4a58;
+}
+.player-time-display {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--prime-text-muted);
+}
+.player-time-display span:first-child {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.player-caption-box {
+  flex: 1;
+  background-color: #121924;
+  border: 1px solid #232f3e;
+  border-radius: var(--btn-radius);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.caption-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--prime-blue);
+  white-space: nowrap;
+}
+.caption-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.caption-words {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--prime-text-muted);
+  white-space: nowrap;
+}
+
+/* Amazon Prime Video Rail / Carousel */
+.prime-carousel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.carousel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.carousel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+.carousel-subtitle {
+  font-size: 0.75rem;
+  color: var(--prime-text-muted);
+}
+.prime-tiles-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.prime-media-card {
+  background-color: var(--prime-card-bg);
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.prime-media-card:hover {
+  transform: scale(1.03);
+  border-color: var(--prime-blue);
+  box-shadow: 0 4px 16px rgba(0, 168, 225, 0.25);
+  z-index: 10;
+}
+.prime-media-card.active {
+  border: 2px solid var(--prime-blue);
+}
+.card-thumbnail-box {
+  position: relative;
+  width: 100%;
+  height: 100px;
+  background-color: #070c14;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.card-status-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+.badge-crit { background-color: var(--status-crit); color: #ffffff; }
+.badge-warn { background-color: var(--status-warn); color: #ffffff; }
+.badge-pass { background-color: var(--status-pass); color: #ffffff; }
+
+.card-meta-block {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.25;
+}
+.card-desc {
+  font-size: 0.68rem;
+  color: var(--prime-text-secondary);
+}
+.card-protocol {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--prime-blue);
+  margin-top: 2px;
+}
+
+/* Amazon Prime Video X-Ray Sidebar */
+.prime-xray-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.xray-header-bar {
+  background-color: #0d141e;
+  border: 1px solid var(--prime-border);
+  border-left: 3px solid var(--prime-blue);
+  border-radius: var(--card-radius);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.xray-title-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.xray-tag {
+  background-color: var(--prime-blue);
+  color: #00050d;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  border-radius: var(--btn-radius);
+}
+.xray-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.03em;
+}
+.xray-version-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--prime-text-muted);
+}
+
+.xray-box {
+  background-color: var(--prime-card-bg);
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  padding: 14px;
+}
+.xray-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.xray-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+.xray-channel-count, .xray-count-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--prime-text-muted);
+}
+.xray-status-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.tag-na { background-color: #273342; color: #94a3b8; }
+.tag-nominal { background-color: var(--status-pass); color: #ffffff; }
+.tag-critical { background-color: var(--status-crit); color: #ffffff; }
+.tag-active { background-color: #1e3a5f; color: #00a8e1; border: 1px solid #00a8e1; }
+.tag-governance { background-color: var(--status-crit); color: #ffffff; }
+
+/* Vitals Grid */
+.xray-vitals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.xray-vital-tile {
+  background-color: #121822;
+  border: 1px solid #232f3e;
+  border-radius: var(--btn-radius);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+}
+.xray-vital-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.xray-vital-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--prime-text-muted);
+  font-weight: 600;
+}
+.xray-vital-reading {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.xray-val {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+.xray-unit {
+  font-size: 0.68rem;
+  color: var(--prime-text-muted);
+}
+
+/* Findings List */
+.xray-findings-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+.xray-finding-item {
+  background-color: #121822;
+  border: 1px solid #232f3e;
+  border-radius: var(--btn-radius);
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.35;
+}
+.item-critical {
+  border-left: 3px solid var(--status-crit);
+}
+.item-warning {
+  border-left: 3px solid var(--status-warn);
+}
+.item-pass {
+  border-left: 3px solid var(--status-pass);
+}
+.xray-bullet {
+  color: var(--prime-blue);
+  font-family: var(--font-mono);
+  font-weight: 800;
+}
+
+/* Protocol Selectors */
+.xray-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.xray-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.xray-form-group label {
+  font-size: 0.7rem;
+  color: var(--prime-text-muted);
+}
+.prime-select, .prime-input {
+  background-color: #121822;
+  border: 1px solid #2d3848;
+  color: #ffffff;
+  font-family: var(--font-primary);
+  font-size: 0.78rem;
+  padding: 6px 8px;
+  border-radius: var(--btn-radius);
+  outline: none;
+  width: 100%;
+}
+.prime-select:focus, .prime-input:focus {
+  border-color: var(--prime-blue);
+}
+.xray-protocol-summary {
+  background-color: #121822;
+  border: 1px dashed #2d3848;
+  border-radius: var(--btn-radius);
+  padding: 6px 10px;
+  font-size: 0.7rem;
+  color: var(--prime-text-secondary);
+}
+
+/* Sign-off Box */
+.xray-box-signoff {
+  border-top: 2px solid var(--status-crit);
+}
+.xray-signoff-desc {
+  font-size: 0.72rem;
+  color: var(--prime-text-muted);
+  margin-bottom: 10px;
+}
+.xray-signoff-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.xray-signoff-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.prime-btn-signoff {
+  background-color: var(--prime-blue);
+  color: #00050d;
+  border: none;
+  font-family: var(--font-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.prime-btn-signoff:hover {
+  background-color: var(--prime-blue-hover);
+}
+.xray-signoff-confirmed {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--status-pass);
+}
+
+/* Contract Drawer */
+.xray-contract-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px;
+}
+.prime-btn-link {
+  background: none;
+  border: none;
+  color: var(--prime-blue);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.contract-audit-id {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--prime-text-muted);
+}
+.contract-audit-id strong {
+  color: #ffffff;
+}
+.prime-contract-drawer {
+  background-color: #000000;
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  padding: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.prime-contract-drawer pre code {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #00a8e1;
+}
+
+/* Legal Pages (Privacy & Terms) */
+.legal-layout {
+  max-width: 1400px;
+  margin: 32px auto;
+  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 36px;
+}
+.legal-sidebar {
+  position: sticky;
+  top: 90px;
+}
+.legal-nav-box {
+  background-color: var(--prime-card-bg);
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  padding: 16px;
+}
+.legal-nav-title {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--prime-blue);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+.legal-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.legal-nav-item {
+  font-size: 0.8rem;
+  color: var(--prime-text-secondary);
+  display: block;
+  transition: color 0.15s ease;
+}
+.legal-nav-item:hover {
+  color: #ffffff;
+}
+.legal-content {
+  background-color: var(--prime-card-bg);
+  border: 1px solid var(--prime-border);
+  border-radius: var(--card-radius);
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.legal-header-block {
+  border-bottom: 1px solid var(--prime-border);
+  padding-bottom: 16px;
+}
+.legal-category {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--prime-blue);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.legal-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 4px 0 8px;
+}
+.legal-meta {
+  font-size: 0.78rem;
+  color: var(--prime-text-muted);
+}
+.legal-callout {
+  background-color: #121c29;
+  border-left: 3px solid var(--prime-blue);
+  border-radius: var(--btn-radius);
+  padding: 14px 18px;
+  font-size: 0.85rem;
+  color: var(--prime-text-secondary);
+  line-height: 1.5;
+}
+.legal-callout-warning {
+  border-left-color: var(--status-crit);
+  background-color: #240d12;
+}
+.legal-section h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+.legal-section p {
+  font-size: 0.88rem;
+  color: var(--prime-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.legal-section ul {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--prime-text-secondary);
+  font-size: 0.85rem;
+}
+.legal-contact-card {
+  background-color: #121822;
+  border: 1px solid #232f3e;
+  border-radius: var(--btn-radius);
+  padding: 14px 18px;
+  font-size: 0.85rem;
+  color: var(--prime-text-secondary);
+  line-height: 1.6;
+}
+.legal-code {
+  font-family: var(--font-mono);
+  color: var(--prime-blue);
+}
+
+/* Amazon Prime Video Style Footer */
+.prime-footer {
+  background-color: #070b12;
+  border-top: 1px solid #19222e;
+  padding: 32px 28px;
+  margin-top: 40px;
+}
+.prime-footer-content {
+  max-width: 1720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.prime-footer-brand {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+.prime-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.prime-footer-links a {
+  font-size: 0.8rem;
+  color: var(--prime-blue);
+  transition: color 0.15s ease;
+}
+.prime-footer-links a:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+.prime-footer-copy {
+  font-size: 0.72rem;
+  color: var(--prime-text-muted);
+  text-align: center;
+  max-width: 800px;
+}
+
+/* Responsive Rules */
+@media (max-width: 1280px) {
+  .prime-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+  .prime-tiles-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .legal-layout {
+    grid-template-columns: 1fr;
+  }
+  .legal-sidebar {
+    position: static;
+  }
+}
+@media (max-width: 768px) {
+  .prime-tiles-row {
+    grid-template-columns: 1fr;
+  }
+  .prime-header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .prime-hero-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

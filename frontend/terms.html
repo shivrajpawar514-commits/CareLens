@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareLens Terms and Conditions - Clinical Edge Safety Systems</title>
+  <meta name="description" content="Institutional terms and conditions for CareLens edge-native clinical visual safety auditor.">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="prime-body">
+  <!-- Prime Video Header -->
+  <header class="prime-header">
+    <div class="prime-header-container">
+      <div class="prime-brand">
+        <a href="/" class="prime-logo-link">
+          <span class="prime-logo-text">carelens</span>
+          <svg class="prime-smile" viewBox="0 0 100 24" width="70" height="16" fill="none">
+            <path d="M 8 10 C 35 22, 65 22, 92 10" stroke="#00a8e1" stroke-width="3.5" stroke-linecap="round" />
+            <path d="M 87 7 L 93 11 L 87 16" fill="#00a8e1" stroke="#00a8e1" stroke-width="1.5" />
+          </svg>
+        </a>
+        <span class="prime-badge-tag">CLINICAL</span>
+      </div>
+
+      <nav class="prime-nav">
+        <a href="/" class="prime-nav-link">Audit Cockpit</a>
+        <a href="/privacy" class="prime-nav-link">Privacy Notice</a>
+        <a href="/terms" class="prime-nav-link active">Terms of Use</a>
+      </nav>
+
+      <div class="prime-header-actions">
+        <a href="/" class="prime-btn-secondary">Return to Cockpit</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Legal Container -->
+  <main class="legal-layout">
+    <div class="legal-sidebar">
+      <div class="legal-nav-box">
+        <div class="legal-nav-title">TERMS NAVIGATION</div>
+        <ul class="legal-nav-list">
+          <li><a href="#section-acceptance" class="legal-nav-item">1. Acceptance of Terms</a></li>
+          <li><a href="#section-advisory-nature" class="legal-nav-item">2. Advisory Decision Support Status</a></li>
+          <li><a href="#section-non-autonomous" class="legal-nav-item">3. Non-Autonomous Equipment Constraint</a></li>
+          <li><a href="#section-clinician-duty" class="legal-nav-item">4. Clinician Duty of Care</a></li>
+          <li><a href="#section-protocols" class="legal-nav-item">5. Protocol Configuration Rules</a></li>
+          <li><a href="#section-scope-limits" class="legal-nav-item">6. Scope and Environmental Limits</a></li>
+          <li><a href="#section-liability" class="legal-nav-item">7. Limitation of Liability</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <article class="legal-content">
+      <div class="legal-header-block">
+        <span class="legal-category">LEGAL &amp; CLINICAL COMPLIANCE</span>
+        <h1 class="legal-title">CareLens Terms and Conditions of Use</h1>
+        <div class="legal-meta">Version 1.0.0 | Effective Date: October 22, 2026 | Reference: CL-TERMS-2026-V1</div>
+      </div>
+
+      <div class="legal-callout legal-callout-warning">
+        <strong>Mandatory Regulatory Notice:</strong> CareLens is an experimental clinical decision-support aid. It is not an FDA-cleared, CE-marked, or certified medical device. It does not replace the professional clinical judgment of licensed physicians, nurses, or respiratory therapists. Do not use this software for autonomous patient monitoring or automated drug titration.
+      </div>
+
+      <section id="section-acceptance" class="legal-section">
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing, deploying, or utilizing the CareLens Edge-Native Visual Safety Auditor software, clinical staff, simulation supervisors, and healthcare institutions agree to be bound by these Terms and Conditions. If an institution does not agree to these terms, authorization to run or test the software is immediately revoked.</p>
+      </section>
+
+      <section id="section-advisory-nature" class="legal-section">
+        <h2>2. Advisory Decision Support Status</h2>
+        <p>CareLens is designed exclusively to provide secondary visual safety auditing. Outputs, including overall risk status (PASS, WARNING, CRITICAL), bounding box overlays, extracted vital values, and audio alerts, are advisory suggestions based on visible optical data only.</p>
+        <p>Absence of a flagged safety issue must never be construed as proof that a medical setup, patient status, or medication dosage is clinically safe or correct.</p>
+      </section>
+
+      <section id="section-non-autonomous" class="legal-section">
+        <h2>3. Non-Autonomous Equipment Constraint</h2>
+        <p>The system is strictly read-only and decoupled from equipment actuators. CareLens:</p>
+        <ul>
+          <li>Shall never be mechanically connected or electronically authorized to alter infusion pump delivery rates.</li>
+          <li>Shall never adjust oxygen rotameter valves, cylinder regulators, or flow restrictors.</li>
+          <li>Shall never command mechanical ventilators, continuous positive airway pressure devices, or dialysis units.</li>
+          <li>Shall never make definitive clinical diagnoses or prescribe pharmacological treatments.</li>
+        </ul>
+      </section>
+
+      <section id="section-clinician-duty" class="legal-section">
+        <h2>4. Clinician Duty of Care</h2>
+        <p>A licensed healthcare professional maintains sole responsibility for patient care at all times. All safety findings, critical alarms, and warning notices emitted by CareLens must be verified in person through clinical examination and direct equipment inspection prior to initiating any corrective or clinical action.</p>
+        <p>The user must record human verification through the designated acknowledgment workflow to maintain institutional audit compliance.</p>
+      </section>
+
+      <section id="section-protocols" class="legal-section">
+        <h2>5. Protocol Configuration Rules</h2>
+        <p>Clinical threshold rules, including normal ranges and critical escalation values, must be explicitly defined and approved by institutional clinical governance committees. Universal thresholds must never be applied indiscriminately across heterogeneous patient demographics. Adult, pediatric, and neonatal reference ranges must be independently validated for each clinical department.</p>
+      </section>
+
+      <section id="section-scope-limits" class="legal-section">
+        <h2>6. Scope and Environmental Limits</h2>
+        <p>CareLens visual analysis is subject to physical optical limitations. Severe glare, extreme underexposure, camera occlusions, or optical distortion impair visual reliability. In all instances of incomplete or degraded visual evidence, the system is constrained to issue WARNING and require manual human inspection.</p>
+      </section>
+
+      <section id="section-liability" class="legal-section">
+        <h2>7. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by applicable law, the developers, contributors, and research institutions provide CareLens on an as-is basis without warranties of any kind, whether express, implied, or statutory. In no event shall the authors or institutions be liable for any direct, indirect, incidental, or consequential clinical damages arising from reliance upon software outputs.</p>
+      </section>
+    </article>
+  </main>
+
+  <!-- Prime Video Style Footer -->
+  <footer class="prime-footer">
+    <div class="prime-footer-content">
+      <div class="prime-footer-brand">carelens clinical systems</div>
+      <div class="prime-footer-links">
+        <a href="/terms">Terms and Conditions</a>
+        <a href="/privacy">Privacy Notice</a>
+        <a href="/">Cockpit Viewport</a>
+        <a href="/api/health">System Health</a>
+      </div>
+      <div class="prime-footer-copy">
+        (c) 2026 CareLens Systems. Advisory decision-support aid. Not a medical device. Clinician verification required for all clinical actions.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

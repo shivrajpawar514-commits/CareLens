@@ -1,0 +1,104 @@
+# CareLens Versioned Clinical Safety Protocols Configuration
+# Clinical Decision Support Reference Only - Not a substitute for medical judgment.
+
+version: "1.0.0"
+institution: "CareLens Clinical Safety Laboratory"
+last_updated: "2026-10-22"
+
+protocols:
+  adult_icu_v1.0:
+    id: "adult_icu_v1.0"
+    version: "1.0.0"
+    name: "Adult Intensive Care Standard Protocol"
+    population: "Adult (>= 18 yrs)"
+    description: "Standard reference ranges and equipment guidelines for adult ICU beds."
+    vitals:
+      heart_rate:
+        nominal_min_bpm: 60
+        nominal_max_bpm: 100
+        critical_low_bpm: 45
+        critical_high_bpm: 130
+      spo2:
+        nominal_min_percent: 94
+        warning_threshold_percent: 93
+        critical_threshold_percent: 88
+      blood_pressure_systolic:
+        nominal_min_mmHg: 90
+        nominal_max_mmHg: 140
+        critical_low_mmHg: 80
+        critical_high_mmHg: 180
+      respiration_rate:
+        nominal_min_bpm: 12
+        nominal_max_bpm: 20
+        critical_low_bpm: 8
+        critical_high_bpm: 30
+    equipment:
+      max_nasal_cannula_o2_lpm: 6.0
+      max_pediatric_o2_lpm: 2.0
+      require_open_roller_clamp: true
+      forbid_air_in_line: true
+
+  pediatric_icu_v1.0:
+    id: "pediatric_icu_v1.0"
+    version: "1.0.0"
+    name: "Pediatric Intensive Care Safety Protocol"
+    population: "Pediatric (1 mo - 12 yrs)"
+    description: "Strict pediatric oxygen limits and reference vitals."
+    vitals:
+      heart_rate:
+        nominal_min_bpm: 80
+        nominal_max_bpm: 130
+        critical_low_bpm: 60
+        critical_high_bpm: 160
+      spo2:
+        nominal_min_percent: 95
+        warning_threshold_percent: 94
+        critical_threshold_percent: 90
+      blood_pressure_systolic:
+        nominal_min_mmHg: 80
+        nominal_max_mmHg: 115
+        critical_low_mmHg: 70
+        critical_high_mmHg: 140
+      respiration_rate:
+        nominal_min_bpm: 20
+        nominal_max_bpm: 30
+        critical_low_bpm: 14
+        critical_high_bpm: 45
+    equipment:
+      max_nasal_cannula_o2_lpm: 2.0
+      max_pediatric_o2_lpm: 2.0
+      require_open_roller_clamp: true
+      forbid_air_in_line: true
+
+  neonatal_icu_v1.0:
+    id: "neonatal_icu_v1.0"
+    version: "1.0.0"
+    name: "Neonatal Intensive Care Precision Protocol"
+    population: "Neonatal (< 28 days)"
+    description: "Neonatal vital ranges and strict hyperoxia/hypoxia protection."
+    vitals:
+      heart_rate:
+        nominal_min_bpm: 100
+        nominal_max_bpm: 160
+        critical_low_bpm: 80
+        critical_high_bpm: 190
+      spo2:
+        nominal_min_percent: 90
+        warning_threshold_percent: 89
+        critical_threshold_percent: 85
+        hyperoxia_warning_percent: 98
+      blood_pressure_systolic:
+        nominal_min_mmHg: 60
+        nominal_max_mmHg: 90
+        critical_low_mmHg: 50
+        critical_high_mmHg: 110
+      respiration_rate:
+        nominal_min_bpm: 30
+        nominal_max_bpm: 60
+        critical_low_bpm: 20
+        critical_high_bpm: 75
+    equipment:
+      max_nasal_cannula_o2_lpm: 1.0
+      max_pediatric_o2_lpm: 1.0
+      require_open_roller_clamp: true
+      forbid_air_in_line: true

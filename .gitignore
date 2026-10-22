@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Operating System & IDEs
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local runtime logs and test artifacts
+*.log
+audit_trail.jsonl

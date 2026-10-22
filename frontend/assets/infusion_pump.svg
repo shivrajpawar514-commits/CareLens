@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <linearGradient id="pumpGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="800" fill="#0f172a" />
+
+  <!-- IV Pole -->
+  <rect x="390" y="20" width="20" height="760" fill="#64748b" stroke="#475569" stroke-width="2" />
+
+  <!-- Infusion Pump Main Chassis -->
+  <rect x="220" y="140" width="360" height="520" rx="20" fill="url(#pumpGrad)" stroke="#64748b" stroke-width="4" />
+
+  <!-- Brand Banner -->
+  <rect x="240" y="160" width="320" height="36" rx="6" fill="#0f172a" />
+  <text x="260" y="184" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">CARELENS MEDFUSION 4000</text>
+  <circle cx="535" cy="178" r="7" fill="#22c55e" />
+
+  <!-- LCD Screen -->
+  <rect x="240" y="210" width="320" height="190" rx="10" fill="#0c4a6e" stroke="#0284c7" stroke-width="2" />
+  <rect x="250" y="220" width="300" height="40" rx="4" fill="#0369a1" />
+  <text x="265" y="246" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700">PRIMARY: 0.9% NaCl (Saline)</text>
+
+  <text x="265" y="295" fill="#bae6fd" font-family="'JetBrains Mono', monospace" font-size="14">RATE</text>
+  <text x="265" y="355" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-size="52" font-weight="800">125.0</text>
+  <text x="430" y="355" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="700">mL/hr</text>
+
+  <text x="265" y="388" fill="#e0f2fe" font-family="'JetBrains Mono', monospace" font-size="12">VTBI: 500 mL  |  VOL INFUSED: 142 mL</text>
+
+  <!-- Pumping Mechanism Door / Latch -->
+  <rect x="240" y="420" width="320" height="150" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2" />
+  <rect x="260" y="445" width="280" height="28" rx="6" fill="#0f172a" stroke="#334155" />
+  <text x="310" y="464" fill="#22c55e" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700">ACTIVE INFUSION RUNNING</text>
+
+  <!-- IV Tubing Route through Pump -->
+  <!-- Upper line -->
+  <path d="M 400 40 L 400 140 L 320 210 L 320 420" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="8" stroke-linecap="round" />
+  <!-- Inside Door -->
+  <line x1="320" y1="420" x2="320" y2="570" stroke="#38bdf8" stroke-width="6" />
+  <!-- Lower Tubing Extends Down -->
+  <path d="M 320 570 C 320 620, 340 640, 360 670" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="8" />
+
+  <!-- CLOSED ROLLER CLAMP (WARNING COMPONENT) -->
+  <g transform="translate(325, 610)">
+    <!-- White Plastic Housing of Roller Clamp -->
+    <rect x="-10" y="0" width="70" height="90" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+    <!-- Track Groove -->
+    <rect x="15" y="10" width="20" height="70" rx="4" fill="#94a3b8" />
+    <!-- Blue Roller Wheel (WHEEL AT PINCH POSITION = CLOSED) -->
+    <rect x="10" y="65" width="30" height="16" rx="4" fill="#ef4444" stroke="#b91c1c" stroke-width="2" />
+    <text x="13" y="77" fill="#ffffff" font-family="sans-serif" font-size="9" font-weight="800">LOCK</text>
+    <line x1="-5" y1="95" x2="55" y2="95" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,2" />
+  </g>
+
+  <!-- Callout Label -->
+  <g transform="translate(420, 610)">
+    <rect width="280" height="110" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="2" opacity="0.95" />
+    <text x="16" y="28" fill="#f59e0b" font-family="sans-serif" font-size="14" font-weight="800">WARNING: LINE OCCLUSION RISK</text>
+    <text x="16" y="52" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="12">Roller clamp wheel in pinched</text>
+    <text x="16" y="70" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="12">closed position on active line.</text>
+    <text x="16" y="94" fill="#94a3b8" font-family="sans-serif" font-size="11">Pump running: verify IV patency.</text>
+  </g>
+</svg>
