@@ -3,8 +3,12 @@ CareLens Comprehensive Test Suite Runner.
 Executes schema, protocol, safety, and image processing test suites.
 """
 
+import os
 import sys
 import unittest
+
+# Ensure repository root is on sys.path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tests.schema.test_schema import TestCareLensSchema
 from tests.protocols.test_protocols import TestProtocolEngine
