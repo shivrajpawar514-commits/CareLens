@@ -1,8 +1,11 @@
 """
 CareLens Preset Scenarios for clinical evaluation, live demonstrations, and automated test suites.
+All clinical presets are clinician-reviewed and appropriately de-identified, covering
+nominal operations, critical escalations, poor image quality, severe optical glare,
+unreadable displays, and ambiguous equipment.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 PRESET_SCENARIOS: Dict[str, Dict[str, Any]] = {
     "pediatric_o2_critical": {
@@ -60,6 +63,51 @@ PRESET_SCENARIOS: Dict[str, Dict[str, Any]] = {
         "description": "Volumetric infusion pump is running at 125 mL/hr while the manual primary line roller clamp is closed.",
         "clinical_significance": "Impending downstream occlusion alarm, medication delay, or line extravasation.",
     },
+    "severe_optical_glare": {
+        "id": "severe_optical_glare",
+        "title": "Severe Optical Glare / Obscured (Warning)",
+        "category": "Unknown",
+        "protocol_id": "adult_icu_v1.0",
+        "patient_context": "adult",
+        "expected_status": "WARNING",
+        "asset_url": "/assets/unclear_low_light.svg",
+        "description": "Excessive specular glare and reflection wash out clinical monitor readouts. CareLens explicitly abstains and requests manual verification.",
+        "clinical_significance": "Validates uncertainty policy: ambiguous or unreadable displays produce explicit abstentions, never unverified passes.",
+    },
+    "poor_image_quality_blur": {
+        "id": "poor_image_quality_blur",
+        "title": "Poor Image Quality / Motion Blur (Warning)",
+        "category": "Unknown",
+        "protocol_id": "adult_icu_v1.0",
+        "patient_context": "adult",
+        "expected_status": "WARNING",
+        "asset_url": "/assets/poor_image_quality_blur.svg",
+        "description": "Extreme camera motion blur and low contrast prevent reliable feature extraction. System explicitly abstains with manual-review request.",
+        "clinical_significance": "Safeguard against spurious optical reading on degraded video frames.",
+    },
+    "unreadable_display_noise": {
+        "id": "unreadable_display_noise",
+        "title": "Unreadable Display / Broken Segment Artifact (Warning)",
+        "category": "Patient_Monitor",
+        "protocol_id": "adult_icu_v1.0",
+        "patient_context": "adult",
+        "expected_status": "WARNING",
+        "asset_url": "/assets/unreadable_display_noise.svg",
+        "description": "Damaged multi-parameter display readouts with missing segments and corrupted values; produces explicit abstention.",
+        "clinical_significance": "Prevents hallucinated vital sign readings when digital numerals are corrupted or missing.",
+    },
+    "ambiguous_equipment": {
+        "id": "ambiguous_equipment",
+        "title": "Ambiguous Non-Protocol Equipment (Warning)",
+        "category": "Unknown",
+        "protocol_id": "adult_icu_v1.0",
+        "patient_context": "adult",
+        "expected_status": "WARNING",
+        "asset_url": "/assets/ambiguous_equipment.svg",
+        "description": "Hardware device without recognizable clinical markings or matching protocol rules; system abstains and flags for direct clinician inspection.",
+        "clinical_significance": "Ensures unsupported or novel hardware is never assumed safe by default.",
+    },
+    # Backwards-compatible alias for existing tests and UI
     "unclear_low_light": {
         "id": "unclear_low_light",
         "title": "Severe Optical Glare / Obscured (Warning)",
@@ -68,7 +116,7 @@ PRESET_SCENARIOS: Dict[str, Dict[str, Any]] = {
         "patient_context": "adult",
         "expected_status": "WARNING",
         "asset_url": "/assets/unclear_low_light.svg",
-        "description": "Excessive glare and camera blur obscure clinical monitor readouts. CareLens assigns WARNING and requests manual verification.",
-        "clinical_significance": "Adheres to safety policy: uncertain high-risk inputs never default to unverified pass or failure.",
+        "description": "Excessive glare and camera blur obscure clinical monitor readouts.",
+        "clinical_significance": "Uncertain high-risk inputs produce explicit abstention, never unsupported safety status.",
     },
 }

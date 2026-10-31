@@ -14,8 +14,8 @@
   <!-- Regulatory & Decision Support Advisory Top Bar -->
   <aside class="prime-top-advisory" role="alert" aria-label="Clinical Decision Support Notice">
     <div class="prime-advisory-inner">
-      <span class="prime-advisory-badge">CLINICAL DECISION SUPPORT AID</span>
-      <span class="prime-advisory-text">CareLens is an advisory prototype and not a certified medical device. It does not autonomously alter medical equipment or treatment. All safety findings require qualified clinician verification.</span>
+      <span class="prime-advisory-badge">RESEARCH PROTOTYPE ONLY</span>
+      <span class="prime-advisory-text">CareLens is an advisory research and development prototype and NOT a certified medical device. Do not use to guide real patient care without appropriate clinical, regulatory, and safety validation. All safety findings require qualified clinician verification.</span>
     </div>
   </aside>
 
@@ -29,6 +29,7 @@
             <path d="M 8 10 C 35 22, 65 22, 92 10" stroke="#00a8e1" stroke-width="3.5" stroke-linecap="round" />
             <path d="M 87 7 L 93 11 L 87 16" fill="#00a8e1" stroke="#00a8e1" stroke-width="1.5" />
           </svg>
+          <span style="font-size: 10px; background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid #f59e0b; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: 700; letter-spacing: 0.5px;">PROTOTYPE</span>
         </a>
         <nav class="prime-main-nav">
           <a href="/" class="prime-nav-item active">Audit Cockpit</a>
@@ -217,14 +218,53 @@
             </div>
 
             <!-- Tile 5 -->
-            <div id="presetGlareWarn" class="prime-media-card" data-preset="unclear_low_light">
+            <div id="presetGlareWarn" class="prime-media-card" data-preset="severe_optical_glare">
               <div class="card-thumbnail-box">
                 <img src="/assets/unclear_low_light.svg" alt="Optical Glare Low Light" class="card-thumb-img">
-                <span class="card-status-badge badge-warn">UNCERTAIN</span>
+                <span class="card-status-badge badge-warn">ABSTAIN</span>
               </div>
               <div class="card-meta-block">
-                <strong class="card-title">Optical Glare Degradation</strong>
-                <span class="card-desc">Severe Glare: Requests Human Check</span>
+                <strong class="card-title">Severe Optical Glare</strong>
+                <span class="card-desc">Wash-out: Explicit Abstention</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 6 -->
+            <div id="presetBlurWarn" class="prime-media-card" data-preset="poor_image_quality_blur">
+              <div class="card-thumbnail-box">
+                <img src="/assets/poor_image_quality_blur.svg" alt="Motion Blur Poor Quality" class="card-thumb-img">
+                <span class="card-status-badge badge-warn">ABSTAIN</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Poor Quality / Motion Blur</strong>
+                <span class="card-desc">Degraded: Manual Review Required</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 7 -->
+            <div id="presetUnreadableWarn" class="prime-media-card" data-preset="unreadable_display_noise">
+              <div class="card-thumbnail-box">
+                <img src="/assets/unreadable_display_noise.svg" alt="Unreadable Display Noise" class="card-thumb-img">
+                <span class="card-status-badge badge-warn">ABSTAIN</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Unreadable Monitor Display</strong>
+                <span class="card-desc">Broken Segments: Manual Check</span>
+                <span class="card-protocol">Protocol: adult_icu_v1.0</span>
+              </div>
+            </div>
+
+            <!-- Tile 8 -->
+            <div id="presetAmbiguousWarn" class="prime-media-card" data-preset="ambiguous_equipment">
+              <div class="card-thumbnail-box">
+                <img src="/assets/ambiguous_equipment.svg" alt="Ambiguous Equipment" class="card-thumb-img">
+                <span class="card-status-badge badge-warn">ABSTAIN</span>
+              </div>
+              <div class="card-meta-block">
+                <strong class="card-title">Ambiguous Equipment</strong>
+                <span class="card-desc">Non-Protocol: Abstain &amp; Flag</span>
                 <span class="card-protocol">Protocol: adult_icu_v1.0</span>
               </div>
             </div>
@@ -401,10 +441,12 @@
         <a href="/terms">Terms and Conditions</a>
         <a href="/privacy">Privacy Notice</a>
         <a href="#clinical-presets">Clinical Incidents</a>
+        <a href="/api/ready">Model Readiness API</a>
         <a href="/api/health">System Health API</a>
+        <a href="/api/audit/verify">Audit Integrity Verification</a>
       </div>
       <div class="prime-footer-copy">
-        (c) 2026 CareLens Systems. Advisory decision-support aid. Not a certified medical device. Clinician verification required for all clinical actions.
+        (c) 2026 CareLens Systems. Research &amp; Development Prototype Only. Not a certified medical device. Do not use to guide real patient care without clinical, regulatory, and safety validation. Clinician verification required for all clinical actions.
       </div>
     </div>
   </footer>

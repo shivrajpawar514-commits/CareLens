@@ -1,6 +1,8 @@
 """
 CareLens Clinical Protocol Engine.
 Evaluates visual observations against versioned protocol rules and assigns risk tiers.
+Enforces strict uncertainty policies: unreadable, ambiguous, or unconfirmed inputs
+produce explicit abstention or manual-review warnings, never confident unsupported passes.
 """
 
 import re
@@ -31,10 +33,30 @@ class ProtocolEngine:
         warning_issues: List[str] = []
         t = self.protocol.vitals
 
+        # Check for complete uncertainty (all vitals N/A)
+        all_na = (
+            vitals.heart_rate_bpm == "N/A"
+            and vitals.spo2_percent == "N/A"
+            and vitals.blood_pressure_mmHg == "N/A"
+            and vitals.respiration_rate == "N/A"
+        )
+        if all_na:
+            return (
+                OverallStatus.WARNING,
+                [
+                    "No vital signs could be extracted from display; abstaining from automated safety assessment. "
+                    "Direct manual clinical verification required."
+                ],
+                [],
+            )
+
+        extracted_count = 0
+
         # 1. Heart Rate
         if vitals.heart_rate_bpm != "N/A":
             try:
                 hr = int(re.sub(r"[^\d]", "", vitals.heart_rate_bpm))
+                extracted_count += 1
                 if hr <= t.hr_critical_low:
                     msg = f"Critical bradycardia detected: HR {hr} bpm (threshold <= {t.hr_critical_low})."
                     critical_issues.append(msg)
@@ -50,13 +72,16 @@ class ProtocolEngine:
                 else:
                     findings.append(f"Heart rate {hr} bpm is within nominal range ({t.hr_min}-{t.hr_max} bpm).")
             except (ValueError, TypeError):
-                findings.append(f"Heart rate value '{vitals.heart_rate_bpm}' could not be parsed numerically.")
+                findings.append(
+                    f"Heart rate value '{vitals.heart_rate_bpm}' could not be parsed numerically; manual review required."
+                )
                 warning_issues.append("Unparseable HR")
 
         # 2. SpO2
         if vitals.spo2_percent != "N/A":
             try:
                 spo2 = int(re.sub(r"[^\d]", "", vitals.spo2_percent))
+                extracted_count += 1
                 if spo2 <= t.spo2_critical_threshold:
                     msg = f"Critical oxygen desaturation detected: SpO2 {spo2}% (threshold <= {t.spo2_critical_threshold}%)."
                     critical_issues.append(msg)
@@ -72,17 +97,19 @@ class ProtocolEngine:
                 else:
                     findings.append(f"SpO2 {spo2}% is nominal under {self.protocol.name}.")
             except (ValueError, TypeError):
-                findings.append(f"SpO2 value '{vitals.spo2_percent}' could not be parsed numerically.")
+                findings.append(
+                    f"SpO2 value '{vitals.spo2_percent}' could not be parsed numerically; manual review required."
+                )
                 warning_issues.append("Unparseable SpO2")
 
         # 3. Blood Pressure
         if vitals.blood_pressure_mmHg != "N/A":
             try:
-                # Look for systolic/diastolic e.g. 120/80 or 78/45
                 parts = re.findall(r"\d+", vitals.blood_pressure_mmHg)
                 if parts:
                     systolic = int(parts[0])
                     diastolic = int(parts[1]) if len(parts) > 1 else None
+                    extracted_count += 1
                     if systolic <= t.bp_systolic_critical_low:
                         msg = f"Critical hypotension detected: Systolic BP {systolic} mmHg (threshold <= {t.bp_systolic_critical_low})."
                         critical_issues.append(msg)
@@ -97,14 +124,18 @@ class ProtocolEngine:
                         findings.append(msg)
                     else:
                         findings.append(f"Blood pressure {vitals.blood_pressure_mmHg} mmHg is nominal.")
+                else:
+                    findings.append(f"Blood pressure '{vitals.blood_pressure_mmHg}' could not be parsed; manual review required.")
+                    warning_issues.append("Unparseable BP")
             except (ValueError, TypeError):
-                findings.append(f"Blood pressure '{vitals.blood_pressure_mmHg}' could not be parsed.")
+                findings.append(f"Blood pressure '{vitals.blood_pressure_mmHg}' could not be parsed; manual review required.")
                 warning_issues.append("Unparseable BP")
 
         # 4. Respiration Rate
         if vitals.respiration_rate != "N/A":
             try:
                 rr = int(re.sub(r"[^\d]", "", vitals.respiration_rate))
+                extracted_count += 1
                 if rr <= t.rr_critical_low:
                     msg = f"Critical hypoventilation/bradypnea: RR {rr} (threshold <= {t.rr_critical_low})."
                     critical_issues.append(msg)
@@ -120,16 +151,19 @@ class ProtocolEngine:
                 else:
                     findings.append(f"Respiration rate {rr} breaths/min is nominal.")
             except (ValueError, TypeError):
-                findings.append(f"Respiration rate '{vitals.respiration_rate}' could not be parsed.")
+                findings.append(f"Respiration rate '{vitals.respiration_rate}' could not be parsed; manual review required.")
                 warning_issues.append("Unparseable RR")
 
-        # Check overall vitals status
+        # Check overall vitals status: never default to PASS if no valid vitals were extracted
         if critical_issues:
             status = OverallStatus.CRITICAL
         elif warning_issues:
             status = OverallStatus.WARNING
-        else:
+        elif extracted_count > 0:
             status = OverallStatus.PASS
+        else:
+            status = OverallStatus.WARNING
+            findings.append("Inconclusive vital sign extraction; direct clinician assessment required.")
 
         return status, findings, critical_issues
 
@@ -145,11 +179,29 @@ class ProtocolEngine:
         critical_issues: List[str] = []
         warning_issues: List[str] = []
 
+        if not overlays:
+            return (
+                OverallStatus.WARNING,
+                [
+                    "No recognized equipment components could be identified in image; "
+                    "abstaining from automated clearance. Manual clinical inspection required."
+                ],
+                [],
+            )
+
         is_pediatric = "pediatric" in self.protocol.protocol_id or patient_context.lower() in ["pediatric", "child", "infant"]
 
         for overlay in overlays:
             label_lower = overlay.label.lower()
             detail_lower = overlay.detail.lower()
+
+            # Ambiguous or unrecognized equipment check
+            if any(k in label_lower or k in detail_lower for k in ["ambiguous", "unrecognized", "unidentified", "unknown dial"]):
+                msg = f"Ambiguous equipment component detected ('{overlay.label}'); abstaining from automated safety clearance. Manual clinical review required."
+                warning_issues.append(msg)
+                findings.append(msg)
+                overlay.status = OverlayStatus.FAIL
+                continue
 
             # Rule 1: Pediatric oxygen flow meter threshold
             if "oxygen" in label_lower or "flow" in label_lower or "rotameter" in label_lower:
@@ -166,6 +218,7 @@ class ProtocolEngine:
                         msg = f"Oxygen flow of {flow_val} L/min exceeds nasal cannula guideline ({self.protocol.equipment.max_nasal_cannula_o2_lpm} L/min)."
                         warning_issues.append(msg)
                         findings.append(msg)
+                        overlay.status = OverlayStatus.FAIL
                     else:
                         findings.append(f"Oxygen flow rate {flow_val} L/min verified within {self.protocol.name} limits.")
 
@@ -184,7 +237,7 @@ class ProtocolEngine:
                 findings.append(msg)
                 overlay.status = OverlayStatus.FAIL
 
-            # Rule 4: Overlay marked as FAIL by vision model
+            # Rule 4: Overlay marked as FAIL by vision model or heuristics
             if overlay.status == OverlayStatus.FAIL and overlay.detail not in findings:
                 findings.append(f"Component '{overlay.label}' flagged: {overlay.detail}")
                 warning_issues.append(overlay.label)
@@ -203,6 +256,7 @@ class ProtocolEngine:
         overall_status: OverallStatus,
         critical_issues: List[str],
         inspection_type: str,
+        findings: Optional[List[str]] = None,
     ) -> str:
         """
         Generates exactly one imperative sentence under 15 words.
@@ -216,9 +270,15 @@ class ProtocolEngine:
                 return "Verify patient heart rate and clinical status immediately."
             if any("hypotension" in issue.lower() or "hypertension" in issue.lower() for issue in critical_issues):
                 return "Verify patient blood pressure and cardiovascular status immediately."
+            if any("air" in issue.lower() for issue in critical_issues):
+                return "Clamp intravenous line immediately and inspect for air bubbles."
             return "Critical observation detected; verify patient and equipment setup immediately."
 
         if overall_status == OverallStatus.WARNING:
+            # Check for abstention or uncertainty indicators
+            findings_text = " ".join(findings or []).lower()
+            if any(w in findings_text for w in ["abstaining", "unreadable", "glare", "ambiguous", "clarity", "inconclusive"]):
+                return "Manual clinical review required. Equipment or display reading cannot be confirmed."
             if inspection_type == "Equipment_Setup":
                 return "Verify equipment connections and settings against the approved clinical protocol."
             return "Verify patient monitor readings against the approved clinical protocol."

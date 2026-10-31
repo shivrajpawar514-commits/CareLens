@@ -32,7 +32,7 @@ class TestSafetyEscalation(unittest.TestCase):
         self.assertTrue(any("air bubble" in c.lower() for c in crits))
 
     def test_uncertain_readings_yield_warning_not_failure(self):
-        """Unreadable or N/A vital signs must result in WARNING or human verification, not false certainty."""
+        """Unreadable or N/A vital signs must result in WARNING / abstention, not false certainty or pass."""
         vitals = VitalsExtracted(
             heart_rate_bpm="N/A",
             spo2_percent="N/A",
@@ -40,8 +40,9 @@ class TestSafetyEscalation(unittest.TestCase):
             respiration_rate="N/A",
         )
         status, findings, crits = self.engine.evaluate_vitals(vitals)
-        # N/A vitals should never create a false CRITICAL alarm
-        self.assertNotEqual(status, OverallStatus.CRITICAL)
+        # N/A vitals produce explicit WARNING abstention
+        self.assertEqual(status, OverallStatus.WARNING)
+        self.assertTrue(any("abstaining" in f.lower() or "manual" in f.lower() for f in findings))
         self.assertEqual(len(crits), 0)
 
     def test_audio_alert_safety_constraints(self):

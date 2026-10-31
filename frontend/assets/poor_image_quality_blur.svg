@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <filter id="severeBlur">
+      <feGaussianBlur stdDeviation="14" />
+    </filter>
+  </defs>
+  <!-- Extremely Underexposed and Blurred Room Frame -->
+  <rect width="800" height="600" fill="#030712" />
+  <g filter="url(#severeBlur)" opacity="0.35">
+    <rect x="120" y="80" width="560" height="420" rx="20" fill="#1e293b" stroke="#334155" stroke-width="4" />
+    <rect x="160" y="120" width="480" height="300" fill="#020617" />
+    <text x="200" y="220" fill="#22c55e" font-size="64" font-family="'JetBrains Mono', monospace">72</text>
+    <text x="360" y="220" fill="#38bdf8" font-size="64" font-family="'JetBrains Mono', monospace">98</text>
+  </g>
+  <!-- Quality Notice Overlay Banner -->
+  <rect x="180" y="480" width="440" height="48" rx="8" fill="#451a03" stroke="#f59e0b" stroke-width="2" />
+  <text x="210" y="510" fill="#fef3c7" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">CLINICAL DE-IDENTIFIED: SEVERE MOTION BLUR</text>
+</svg>

@@ -1,6 +1,7 @@
 """
 CareLens Schema and Output Contract Tests.
-Verifies strict adherence to canonical JSON contract, enums, coordinate constraints, and key rules.
+Verifies strict adherence to canonical JSON contract, enums, coordinate constraints,
+extra-key rejections, and audio alert word-count rules.
 """
 
 import unittest
@@ -66,6 +67,28 @@ class TestCareLensSchema(unittest.TestCase):
         with self.assertRaises(ValidationError):
             CareLensResponse.model_validate(data)
 
+    def test_forbid_extra_keys_in_nested_models(self):
+        """Strictly forbid extra keys in vitals and visual overlays."""
+        # Extra key in vitals_extracted
+        with self.assertRaises(ValidationError):
+            VitalsExtracted.model_validate({
+                "heart_rate_bpm": "70",
+                "spo2_percent": "98",
+                "blood_pressure_mmHg": "120/80",
+                "respiration_rate": "16",
+                "extra_vital": "123",
+            })
+
+        # Extra key in visual_overlays
+        with self.assertRaises(ValidationError):
+            VisualOverlay.model_validate({
+                "label": "Dial",
+                "box_2d": [0, 0, 100, 100],
+                "status": "PASS",
+                "detail": "Ok",
+                "confidence_score": 0.99,
+            })
+
     def test_invalid_enums_rejected(self):
         """Enums must be strictly Equipment_Setup, Patient_Monitor, or Unknown."""
         data = {
@@ -86,11 +109,34 @@ class TestCareLensSchema(unittest.TestCase):
 
     def test_box_2d_coordinate_constraints(self):
         """Coordinates must be 4 integers in [0..1000] with ymin <= ymax and xmin <= xmax."""
+        # Valid boundary coordinates
+        ov_min = VisualOverlay(label="Min", box_2d=[0, 0, 0, 0], status=OverlayStatus.PASS, detail="Min")
+        self.assertEqual(ov_min.box_2d, [0, 0, 0, 0])
+
+        ov_max = VisualOverlay(label="Max", box_2d=[0, 0, 1000, 1000], status=OverlayStatus.PASS, detail="Max")
+        self.assertEqual(ov_max.box_2d, [0, 0, 1000, 1000])
+
         # Test out of range > 1000
         with self.assertRaises(ValidationError):
             VisualOverlay(
                 label="Dial",
-                box_2d=[100, 100, 1050, 400],
+                box_2d=[100, 100, 1001, 400],
+                status=OverlayStatus.PASS,
+                detail="Test",
+            )
+
+        # Test negative coordinates
+        with self.assertRaises(ValidationError):
+            VisualOverlay(
+                label="Dial",
+                box_2d=[-1, 100, 500, 400],
+                status=OverlayStatus.PASS,
+                detail="Test",
+            )
+        with self.assertRaises(ValidationError):
+            VisualOverlay(
+                label="Dial",
+                box_2d=[100, -5, 500, 400],
                 status=OverlayStatus.PASS,
                 detail="Test",
             )
@@ -99,7 +145,7 @@ class TestCareLensSchema(unittest.TestCase):
         with self.assertRaises(ValidationError):
             VisualOverlay(
                 label="Dial",
-                box_2d=[500, 100, 200, 400],
+                box_2d=[600, 100, 500, 400],
                 status=OverlayStatus.PASS,
                 detail="Test",
             )
@@ -108,36 +154,63 @@ class TestCareLensSchema(unittest.TestCase):
         with self.assertRaises(ValidationError):
             VisualOverlay(
                 label="Dial",
-                box_2d=[100, 600, 400, 200],
+                box_2d=[100, 600, 500, 400],
+                status=OverlayStatus.PASS,
+                detail="Test",
+            )
+
+        # Test wrong length (3 elements or 5 elements)
+        with self.assertRaises(ValidationError):
+            VisualOverlay(
+                label="Dial",
+                box_2d=[100, 100, 500],
+                status=OverlayStatus.PASS,
+                detail="Test",
+            )
+        with self.assertRaises(ValidationError):
+            VisualOverlay(
+                label="Dial",
+                box_2d=[100, 100, 500, 500, 600],
                 status=OverlayStatus.PASS,
                 detail="Test",
             )
 
     def test_audio_alert_word_count_limit(self):
         """audio_alert_text must be strictly fewer than 15 words."""
-        # 16 words -> must fail validation
-        long_alert = "This is a very long alert that definitely exceeds fifteen words in length and should be rejected immediately by the schema validator."
-        with self.assertRaises(ValidationError):
-            CareLensResponse(
-                inspection_type=InspectionType.UNKNOWN,
-                overall_status=OverallStatus.WARNING,
-                vitals_extracted=VitalsExtracted(),
-                visual_overlays=[],
-                findings=[],
-                audio_alert_text=long_alert,
-            )
-
-        # 9 words -> must pass
-        valid_alert = "Verify the equipment setup against the approved clinical protocol."
+        # 14 words: should pass
+        fourteen_words = "One two three four five six seven eight nine ten eleven twelve thirteen fourteen."
         resp = CareLensResponse(
-            inspection_type=InspectionType.UNKNOWN,
-            overall_status=OverallStatus.WARNING,
+            inspection_type=InspectionType.EQUIPMENT_SETUP,
+            overall_status=OverallStatus.PASS,
             vitals_extracted=VitalsExtracted(),
             visual_overlays=[],
             findings=[],
-            audio_alert_text=valid_alert,
+            audio_alert_text=fourteen_words,
         )
-        self.assertEqual(resp.audio_alert_text, valid_alert)
+        self.assertEqual(resp.audio_alert_text, fourteen_words)
+
+        # 15 words: must fail validation
+        fifteen_words = "One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen."
+        with self.assertRaises(ValidationError):
+            CareLensResponse(
+                inspection_type=InspectionType.EQUIPMENT_SETUP,
+                overall_status=OverallStatus.PASS,
+                vitals_extracted=VitalsExtracted(),
+                visual_overlays=[],
+                findings=[],
+                audio_alert_text=fifteen_words,
+            )
+
+        # Empty string: must fail
+        with self.assertRaises(ValidationError):
+            CareLensResponse(
+                inspection_type=InspectionType.EQUIPMENT_SETUP,
+                overall_status=OverallStatus.PASS,
+                vitals_extracted=VitalsExtracted(),
+                visual_overlays=[],
+                findings=[],
+                audio_alert_text="",
+            )
 
 
 if __name__ == "__main__":

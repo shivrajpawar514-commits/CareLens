@@ -1,6 +1,8 @@
 """
 CareLens Edge Clinical Engine.
 Unified edge auditor coordinating Gemma 4 multimodal inference and deterministic edge rules.
+Strictly enforces prototype safety boundaries and uncertainty policies: ambiguous, degraded,
+or unreadable inputs produce explicit abstentions or manual-review warnings, never confident passes.
 """
 
 import time
@@ -22,8 +24,9 @@ from app.inference.gemma_adapter import GemmaVisionAdapter
 
 
 CLINICAL_DISCLAIMER = (
-    "CareLens is a clinical decision-support aid, not a medical device or a substitute "
-    "for trained clinical judgment. It must not autonomously change equipment settings, "
+    "CareLens is a research and development prototype and clinical decision-support aid, "
+    "NOT a certified medical device. Do not use to guide real patient care without appropriate clinical, "
+    "regulatory, and safety validation. It must never autonomously change equipment settings, "
     "control treatment, or make definitive clinical decisions."
 )
 
@@ -103,6 +106,7 @@ class EdgeClinicalEngine:
             "protocol_version": active_protocol.version,
             "patient_context": patient_context,
             "image_quality": img_meta,
+            "is_prototype": True,
             "disclaimer": CLINICAL_DISCLAIMER,
         }
 
@@ -119,7 +123,9 @@ class EdgeClinicalEngine:
             overall_status=OverallStatus.WARNING,
             vitals_extracted=VitalsExtracted(),
             visual_overlays=[],
-            findings=[f"Image decode failed: {error_msg}. Verify camera feed or file format."],
+            findings=[
+                f"Image decode failed: {error_msg}. Abstaining from automated assessment; verify camera feed or file format."
+            ],
             audio_alert_text="Verify camera input format and image transmission.",
         )
         meta = {
@@ -130,6 +136,7 @@ class EdgeClinicalEngine:
             "protocol_id": protocol.protocol_id,
             "protocol_version": protocol.version,
             "patient_context": "adult",
+            "is_prototype": True,
             "disclaimer": CLINICAL_DISCLAIMER,
         }
         return resp, meta
@@ -156,16 +163,17 @@ class EdgeClinicalEngine:
             vitals_extracted=VitalsExtracted(),
             visual_overlays=[
                 VisualOverlay(
-                    label="Image Quality Concern",
+                    label="Image Quality Concern / Degraded Feed",
                     box_2d=[100, 100, 900, 900],
-                    status=OverlayStatus.PASS,
-                    detail=f"Image clarity degraded ({reason_str}); readings cannot be validated reliably.",
+                    status=OverlayStatus.FAIL,
+                    detail=f"Image clarity degraded ({reason_str}); abstaining from automated analysis. Manual visual inspection required.",
                 )
             ],
             findings=[
-                f"Image display is {reason_str}; readings cannot be confirmed without clinical visual verification."
+                f"Image display is {reason_str}; abstaining from automated safety assessment. "
+                "Direct manual clinical verification required."
             ],
-            audio_alert_text="Verify lighting and adjust camera position for clear inspection.",
+            audio_alert_text="Manual clinical review required. Equipment or display reading cannot be confirmed.",
         )
         meta = {
             "audit_id": audit_id,
@@ -176,6 +184,7 @@ class EdgeClinicalEngine:
             "protocol_version": protocol.version,
             "patient_context": "adult",
             "image_quality": img_meta,
+            "is_prototype": True,
             "disclaimer": CLINICAL_DISCLAIMER,
         }
         return resp, meta
@@ -189,6 +198,7 @@ class EdgeClinicalEngine:
     ) -> CareLensResponse:
         """
         High-speed edge audit based on validated clinical rules and grounded presets.
+        Strictly enforces that uncertainty, glare, or ambiguity produce explicit abstentions.
         """
         engine = ProtocolEngine(protocol)
 
@@ -209,7 +219,7 @@ class EdgeClinicalEngine:
                 ),
             ]
             e_status, e_findings, e_crit = engine.evaluate_equipment(overlays, patient_context)
-            audio = engine.generate_audio_alert(e_status, e_crit, "Equipment_Setup")
+            audio = engine.generate_audio_alert(e_status, e_crit, "Equipment_Setup", e_findings)
             return CareLensResponse(
                 inspection_type=InspectionType.EQUIPMENT_SETUP,
                 overall_status=e_status,
@@ -236,7 +246,7 @@ class EdgeClinicalEngine:
                 ),
             ]
             e_status, e_findings, e_crit = engine.evaluate_equipment(overlays, patient_context)
-            audio = engine.generate_audio_alert(e_status, e_crit, "Equipment_Setup")
+            audio = engine.generate_audio_alert(e_status, e_crit, "Equipment_Setup", e_findings)
             return CareLensResponse(
                 inspection_type=InspectionType.EQUIPMENT_SETUP,
                 overall_status=e_status,
@@ -281,7 +291,7 @@ class EdgeClinicalEngine:
                     detail="Impedance pneumograph readout 32 breaths/min (tachypnea >= 30).",
                 ),
             ]
-            audio = engine.generate_audio_alert(v_status, v_crit, "Patient_Monitor")
+            audio = engine.generate_audio_alert(v_status, v_crit, "Patient_Monitor", v_findings)
             return CareLensResponse(
                 inspection_type=InspectionType.PATIENT_MONITOR,
                 overall_status=v_status,
@@ -326,7 +336,7 @@ class EdgeClinicalEngine:
                     detail="Respiration rate 16 breaths/min is within resting limits (12-20).",
                 ),
             ]
-            audio = engine.generate_audio_alert(v_status, v_crit, "Patient_Monitor")
+            audio = engine.generate_audio_alert(v_status, v_crit, "Patient_Monitor", v_findings)
             return CareLensResponse(
                 inspection_type=InspectionType.PATIENT_MONITOR,
                 overall_status=v_status,
@@ -353,7 +363,7 @@ class EdgeClinicalEngine:
                 ),
             ]
             e_status, e_findings, e_crit = engine.evaluate_equipment(overlays, patient_context)
-            audio = engine.generate_audio_alert(OverallStatus.WARNING, e_crit, "Equipment_Setup")
+            audio = engine.generate_audio_alert(OverallStatus.WARNING, e_crit, "Equipment_Setup", e_findings)
             return CareLensResponse(
                 inspection_type=InspectionType.EQUIPMENT_SETUP,
                 overall_status=OverallStatus.WARNING,
@@ -363,20 +373,120 @@ class EdgeClinicalEngine:
                 audio_alert_text=audio,
             )
 
-        # 6. Default Generic Edge Observation
+        # 6. Preset Hint: Severe Optical Glare / Obscured (Clinician-Reviewed De-identified Example)
+        if preset_hint in ("severe_optical_glare", "unclear_low_light"):
+            overlays = [
+                VisualOverlay(
+                    label="Severe Optical Glare Wash-out",
+                    box_2d=[150, 150, 850, 850],
+                    status=OverlayStatus.FAIL,
+                    detail="High-intensity specular reflection and optical glare wash out clinical monitor readouts.",
+                )
+            ]
+            findings = [
+                "Severe optical glare prevents reliable feature extraction; "
+                "abstaining from automated safety determination. Direct manual clinical inspection required."
+            ]
+            audio = "Manual clinical review required. Equipment or display reading cannot be confirmed."
+            return CareLensResponse(
+                inspection_type=InspectionType.UNKNOWN,
+                overall_status=OverallStatus.WARNING,
+                vitals_extracted=VitalsExtracted(),
+                visual_overlays=overlays,
+                findings=findings,
+                audio_alert_text=audio,
+            )
+
+        # 7. Preset Hint: Poor Image Quality / Motion Blur (Clinician-Reviewed De-identified Example)
+        if preset_hint == "poor_image_quality_blur":
+            overlays = [
+                VisualOverlay(
+                    label="Degraded Video Frame",
+                    box_2d=[100, 100, 900, 900],
+                    status=OverlayStatus.FAIL,
+                    detail="Camera motion blur and low illumination prevent reliable OCR and dial extraction.",
+                )
+            ]
+            findings = [
+                "Image quality is severely degraded by motion blur and low illumination; "
+                "abstaining from automated safety determination. Direct manual clinical review required."
+            ]
+            audio = "Manual clinical review required. Equipment or display reading cannot be confirmed."
+            return CareLensResponse(
+                inspection_type=InspectionType.UNKNOWN,
+                overall_status=OverallStatus.WARNING,
+                vitals_extracted=VitalsExtracted(),
+                visual_overlays=overlays,
+                findings=findings,
+                audio_alert_text=audio,
+            )
+
+        # 8. Preset Hint: Unreadable Display Noise (Clinician-Reviewed De-identified Example)
+        if preset_hint == "unreadable_display_noise":
+            overlays = [
+                VisualOverlay(
+                    label="Corrupted Display Readouts",
+                    box_2d=[120, 120, 880, 880],
+                    status=OverlayStatus.FAIL,
+                    detail="Numeric LCD readouts have broken segments or unreadable digits.",
+                )
+            ]
+            findings = [
+                "Display readouts are corrupted or unreadable; "
+                "abstaining from automated vital sign analysis. Direct clinician monitor assessment required."
+            ]
+            audio = "Manual clinical review required. Equipment or display reading cannot be confirmed."
+            return CareLensResponse(
+                inspection_type=InspectionType.PATIENT_MONITOR,
+                overall_status=OverallStatus.WARNING,
+                vitals_extracted=VitalsExtracted(),
+                visual_overlays=overlays,
+                findings=findings,
+                audio_alert_text=audio,
+            )
+
+        # 9. Preset Hint: Ambiguous Equipment (Clinician-Reviewed De-identified Example)
+        if preset_hint == "ambiguous_equipment":
+            overlays = [
+                VisualOverlay(
+                    label="Ambiguous Equipment Unit",
+                    box_2d=[140, 140, 860, 860],
+                    status=OverlayStatus.FAIL,
+                    detail="Hardware apparatus lacks recognizable clinical markings or matching protocol safety rules.",
+                )
+            ]
+            findings = [
+                "Ambiguous or unrecognized medical equipment detected without matching protocol safety rules; "
+                "abstaining from automated clearance. Direct clinician inspection required."
+            ]
+            audio = "Manual clinical review required. Equipment or display reading cannot be confirmed."
+            return CareLensResponse(
+                inspection_type=InspectionType.UNKNOWN,
+                overall_status=OverallStatus.WARNING,
+                vitals_extracted=VitalsExtracted(),
+                visual_overlays=overlays,
+                findings=findings,
+                audio_alert_text=audio,
+            )
+
+        # 10. Default / Unrecognized Observation: Explicit Abstention / Manual Review
+        # (CRITICAL SAFETY RULE: Never default to PASS on unrecognized inputs)
         overlays = [
             VisualOverlay(
-                label="Clinical Display/Equipment Area",
+                label="Unverified Visual Observation",
                 box_2d=[150, 150, 850, 850],
-                status=OverlayStatus.PASS,
-                detail="Visible observation inspected against protocol; verify against active clinical protocol.",
+                status=OverlayStatus.FAIL,
+                detail="Observation cannot be definitively verified against approved protocol; requires manual verification.",
             )
         ]
         return CareLensResponse(
-            inspection_type=InspectionType.EQUIPMENT_SETUP,
-            overall_status=OverallStatus.PASS,
+            inspection_type=InspectionType.UNKNOWN,
+            overall_status=OverallStatus.WARNING,
             vitals_extracted=VitalsExtracted(),
             visual_overlays=overlays,
-            findings=["Equipment visual observation inspected against approved clinical protocol."],
-            audio_alert_text="Verify the setup against the approved clinical protocol.",
+            findings=[
+                "Ambiguous or unverified clinical observation; "
+                "abstaining from automated safety determination. Direct clinician manual review required."
+            ],
+            audio_alert_text="Manual clinical review required. Equipment or display reading cannot be confirmed.",
         )
